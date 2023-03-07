@@ -1,46 +1,54 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=cni-route-override
-PKG_VERSION:=0.1
-PKG_RELEASE:=$(AUTORELEASE)
-
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/redhat-nfvpe/$(PKG_NAME).git
-PKG_SOURCE_DATE:=2021-11-29
-PKG_SOURCE_VERSION:=6263d6876c6aa52d6b660e4b54da6b0b58b04022
-PKG_MIRROR_HASH:=c74763b44b2b97927a75aecc8d2e2681784888e20be1a456c34a270fd642d1f0
+PKG_NAME:=cni-protocol
+PKG_VERSION:=20230217
+PKG_RELEASE:=1
 
 PKG_MAINTAINER:=Oskari Rauta <oskari.rauta@gmail.com>
-PKG_LICENSE:=Apache-2.0
-PKG_LICENSE_FILES:=LICENSE
-
-PKG_BUILD_DEPENDS:=golang/host
-PKG_BUILD_PARALLEL:=1
-PKG_USE_MIPS16:=0
-
-GO_PKG:=github.com/redhat-nfvpe/$(PKG_NAME)/
-GO_PKG_BUILD_PKG:=github.com/redhat-nfvpe/$(PKG_NAME)/cmd/route-override
 
 include $(INCLUDE_DIR)/package.mk
-include ../../lang/golang/golang-package.mk
 
-define Package/cni-route-override
+define Package/cni-protocol/Default
+endef
+
+define Package/cni-protocol
   SECTION:=net
   CATEGORY:=Network
-  TITLE:=Meta CNI plugin for overriding IP route
-  URL:=https://github.com/redhat-nfvpe/cni-route-override/
-  DEPENDS:=$(GO_ARCH_DEPENDS)
+  TITLE:=cni netifd protocol
+  PKGARCH:=all
 endef
 
-define Package/cni-route-override/description
-  route-override IPAM works as meta CNI plugin to override IP route given by previous CNI plugins.
+define Package/cni-protocol/description
+  protocol support for cni networks for netifd
+  makes defining network for podman and other similar
+  systems using cni networking much easier and simpler.
+
+  with cni protocol support, on a network, where firewall
+  and portmapper management is disabled, you may control
+  firewalling with openwrt's default firewall configuration.
+
+  for example, create a container that hosts web content on
+  port 80 with static ip on your cni network, if your
+  network is 10.88.0.0/16, use for eg. 10.88.0.101 as
+  your containers static ip address. Create a zone, cni
+  to your firewall and add your interface to it.
+
+  Now you can easily set up redirectiong to 10.88.0.101:80
+  to expose it's port 80 to wan for serving your website.
+
+  Protocol has one setting: device, on podman this often
+  is cni-podman0.
 endef
 
-define Package/cni-route-override/install
-	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
-	$(INSTALL_DIR) $(1)/usr/lib/cni
-	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/* $(1)/usr/lib/cni
+define Build/Configure
 endef
 
-$(eval $(call GoBinPackage,cni-route-override))
-$(eval $(call BuildPackage,cni-route-override))
+define Build/Compile
+endef
+
+define Package/cni-protocol/install
+	$(INSTALL_DIR) $(1)/lib/netifd/proto
+	$(INSTALL_BIN) ./files/cni.sh $(1)/lib/netifd/proto/cni.sh
+endef
+
+$(eval $(call BuildPackage,cni-protocol))
