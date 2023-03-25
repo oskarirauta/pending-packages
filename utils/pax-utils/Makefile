@@ -27,7 +27,7 @@ define Package/pax-utils
   CATEGORY:=Utilities
   TITLE:=ELF utils for security relevant property checking
   URL:=https://wiki.gentoo.org/wiki/Hardened/PaX_Utilities
-  DEPENDS:=
+  DEPENDS:=+libcap
 endef
 
 define Package/pax-utils/description
