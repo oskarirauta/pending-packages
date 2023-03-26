@@ -6,7 +6,7 @@ PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/greenpau/cni-plugins/archive/v$(PKG_VERSION)
-PKG_HASH:=skip
+PKG_HASH:=51c4b41c61f46c7dfc691d52dba301e7d8189589e1a625772f761ea3ae804fb3
 
 PKG_MAINTAINER:=Oskari Rauta <oskari.rauta@gmail.com>
 PKG_LICENSE:=Apache-2.0
